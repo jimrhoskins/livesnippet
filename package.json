@@ -1,0 +1,20 @@
+{
+  "name": "livesnippet",
+  "description": "Live Snippet web server and file watcher",
+  "version": "0.0.0",
+  "repository": {
+    "url": ""
+  },
+  "author": "Jim Hoskins <jim@jimhoskins.com> (http://jimhoskins.com)",
+  "main": "server.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "engines": {
+    "node": "*"
+  },
+  "dependencies": {
+    "socket.io": "*",
+    "express": "*"
+  }
+}
