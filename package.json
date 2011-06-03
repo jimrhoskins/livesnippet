@@ -16,6 +16,10 @@
   "dependencies": {
     "socket.io": "*",
     "express": "*",
-    "jade" : "*"
+    "jade" : "*",
+    "glob" : "*",
+    "underscore": "*",
+    "optimist": "*",
+    "restler": "*"
   }
 }

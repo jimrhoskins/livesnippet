@@ -20,8 +20,8 @@ app.configure(function () {
 app.post('/snippets', function (req, res) {
   var channel  = "foo";
   snippets[channel] = new Snippet();
+  res.header('Content-Type', 'application/json');
   res.send(JSON.stringify({
-    ok: 200,
     channel: channel,
     path: "/snippets/" + channel
   }));

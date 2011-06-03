@@ -1,0 +1,6 @@
+- Add option parser
+- move watcher to bin
+- allow multiple watched files
+- allow watch to parse globs
+- Browser with multiple files per channel
+

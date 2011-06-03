@@ -9,8 +9,8 @@ var file = process.argv[2];
 
 // Location of server
 // TODO Make this an environment or argument variable
-var HOST = "localhost";
-var PORT = 3000;
+var HOST = "blooming-river-90.herokuapp.com";
+var PORT = 80;
 
 // Create a new snippet for this file
 // TODO Implement the ability to pass an existing snippet channel name
