@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "socket.io": "*",
-    "express": "*"
+    "express": "*",
+    "jade" : "*"
   }
 }
