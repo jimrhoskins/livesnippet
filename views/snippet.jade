@@ -2,8 +2,13 @@
 html
   head
     title Snippet
-  body
-    | Hello
-    pre#data
+    link(rel="stylesheet", href="http://ajax.googleapis.com/ajax/libs/dojo/1.6/dojo/resources/dojo.css")
+    link(rel="stylesheet", href="http://ajax.googleapis.com/ajax/libs/dojo/1.6/dijit/themes/claro/claro.css")
+    style
+      body, html { height: 100%;}
+    script var CHANNEL="#{channel}";
+  body.claro
+    #tabs
     script(src="/socket.io/socket.io.js")
+    script(src="http://ajax.googleapis.com/ajax/libs/dojo/1.6/dojo/dojo.xd.js");
     script(src="/js/main.js")

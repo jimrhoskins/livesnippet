@@ -7,8 +7,18 @@ var app = express.createServer();
 var socket = io.listen(app);
 var snippets = {};
 
-// TODO Remove initializeation of foo
-snippets.foo = new Snippet();
+// Utlitity to concat a stream into a string
+function concat(stream, callback) {
+  var data = [];
+  stream.on('data', function (chunk) {
+    data.push(chunk);
+  });
+
+  stream.on('end', function () {
+    callback(null, data.join(''));
+  });
+}
+
 
 // Configure views and public directory
 app.configure(function () {
@@ -18,34 +28,45 @@ app.configure(function () {
 
 // Endpoint for watch.js to create a new snippet
 app.post('/snippets', function (req, res) {
-  var channel  = "foo";
-  snippets[channel] = new Snippet();
+  var snippet;
+  //TODO add verification;
+  if (req.query.channel) {
+    if (snippets[req.query.channel]) {
+      snippet = snippets[req.query.channel];
+    } else {
+      snippet = new Snippet(req.query.channel);
+      snippets[snippet.name] = snippet;
+    }
+  } else {
+    snippet = new Snippet();
+    snippets[snippet.name] = snippet;
+  }
+
   res.header('Content-Type', 'application/json');
   res.send(JSON.stringify({
-    channel: channel,
-    path: "/snippets/" + channel
+    channel: snippet.name,
+    path: "/snippets/" + snippet.name
   }));
 });
 
 // Clients view of a snippet
 app.get('/snippets/:channel', function (req, res) {
-  res.render('snippet.jade', {layout: false});
+  res.render('snippet.jade', {layout: false, channel: req.params.channel});
 });
 
 // API for watch.js to update contents of snippet
 app.post('/snippets/:channel', function (req, res) {
-  // Load all body data into data
-  var data = [];
-
-  req.on('data', function (chunk) {
-    data.push(chunk);
-  });
-
-  // When body is read, create string, and update this snippet
-  // TODO use :channel instead of foo
-  req.on('end', function () {
+  concat(req, function (err, body) {
     res.send('OK');
-    snippets.foo.update(data.join(''));
+    
+    var channel = req.params.channel;
+    var snippet = snippets[channel];
+    var name = req.query.name;
+
+    console.log('Updating...', channel, name);
+
+    snippet.updateFile(name, body);
+
     console.log('Updated Snippet from POST');
   });
 });
@@ -56,13 +77,13 @@ socket.on('connection', function (client) {
   var snippet = null;
 
   // Named listener for snippet updates (for easy removal on disconnect)
-  function onSnippetUpdate() {
-    console.log('Snippet Update', snippet.data);
+  function onSnippetUpdate(filename) {
+    console.log('Snippet Update', filename);
 
     // Send the socket client the newest content
-    client.send({
-      content: snippet.data
-    });
+    var files = filename ? [filename] : null;
+    client.send(snippet.repr(files));
+    
   }
 
 
@@ -75,14 +96,14 @@ socket.on('connection', function (client) {
         channel = data.channel;
         if (snippets[channel]) {
           snippet = snippets[channel];
-          snippet.on('update', onSnippetUpdate);
-
-          // Initialize the client with the current data
-          onSnippetUpdate();
-          console.log('Successfully subscribed to: ' + channel);
         } else {
-          console.log('Subscription failed, no such channel: ' + channel);
+          snippet = snippets[channel] = new Snippet(channel);
         }
+        snippet.on('update', onSnippetUpdate);
+
+        // Initialize the client with the current data
+        onSnippetUpdate();
+        console.log('Successfully subscribed to: ' + channel);
       } else {
         console.log('Subscription failed, already subscribed: ' + channel);
       }
