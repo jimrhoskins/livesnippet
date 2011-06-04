@@ -1,0 +1,9 @@
+pre ol {
+  color: #AAA;
+  margin: 0 0 0 2.5em;
+  padding: 0;
+}
+
+li > .line {
+  color: #000;
+}
