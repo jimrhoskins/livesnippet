@@ -1,7 +1,8 @@
 var socket = new io.Socket();
 socket.connect();
 
-//Hello World
+//ddd:w
+//
 
 dojo.require('dijit.layout.TabContainer');
 dojo.require('dijit.layout.ContentPane');
