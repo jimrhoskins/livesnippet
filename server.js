@@ -1,10 +1,10 @@
 var express = require('express');
-var io  = require('socket.io');
+
 var Snippet = require('./lib/snippet').Snippet;
 
 // Initialize HTTP Server, Socket, and Snippet database
 var app = express.createServer();
-var socket = io.listen(app);
+var io = require('socket.io').listen(app);
 var snippets = {};
 
 // Utlitity to concat a stream into a string
@@ -72,7 +72,7 @@ app.post('/snippets/:channel', function (req, res) {
 });
 
 // Handle sockets
-socket.on('connection', function (client) {
+io.sockets.on('connection', function (socket) {
   var channel = null;
   var snippet = null;
 
@@ -82,12 +82,30 @@ socket.on('connection', function (client) {
 
     // Send the socket client the newest content
     var files = filename ? [filename] : null;
-    client.send(snippet.repr(files));
+    socket.emit('fileUpdate', snippet.repr(files));
     
   }
 
 
-  client.on('message', function (data) {
+
+  function getChannel(name){
+    if (snippets[name]) {
+      return snippets[name];
+    }
+    return (snippets[name] = new Snippet(name));
+  }
+
+  socket.on('subscribe', function(channel) {
+    snippet = getChannel(channel);
+    snippet.on('update', onSnippetUpdate);
+    onSnippetUpdate();
+    console.log('SUUUUBBB', channel);
+  });
+
+  
+  socket.on('imessage', function (data) {
+
+
 
     // If message contains existing channel, subscribe to that snippet's update (onSnippetUpdate)
     if (data.channel) {
@@ -112,7 +130,7 @@ socket.on('connection', function (client) {
 
 
   // On disconnect, remove client's update listener for the snippet
-  client.on('disconnect', function () {
+  socket.on('disconnect', function () {
     if (snippet) {
       snippet.removeListener('update', onSnippetUpdate);
     }
@@ -121,6 +139,7 @@ socket.on('connection', function (client) {
   
   });
 });
+
 
 // HTTP Server listen
 app.listen(process.env.PORT || 3000);

@@ -1,8 +1,4 @@
-var socket = new io.Socket();
-socket.connect();
-
-//ddd:w
-//
+var socket = io.connect('http://localhost');
 
 dojo.require('dijit.layout.TabContainer');
 dojo.require('dijit.layout.ContentPane');
@@ -18,6 +14,7 @@ function getSnippet(filename) {
   if (snippets[filename]) {
     return snippets[filename];
   } else {
+    var index;
     var pre = dojo.create('pre', {
       className: 'editor',
       innerHTML: '...'
@@ -29,8 +26,15 @@ function getSnippet(filename) {
       content: pre
     });
 
+    var children = tabs.getChildren();
+    index = children.length - 1;
+
+   // index = 0;
+    while(children[index] && filename < children[index].title) index -= 1
+    //index = Math.max(0, index - 1);
     snippets[filename].pre = pre;
-    tabs.addChild(snippets[filename]);
+    console.log('idx', index)
+    tabs.addChild(snippets[filename], index + 1 );
     return snippets[filename];
   }
 }
@@ -38,7 +42,8 @@ function getSnippet(filename) {
 
 dojo.addOnLoad(function () {
   tabs = new dijit.layout.TabContainer({
-    style: 'height: 100%; width: 100%'
+    style: 'height: 100%; width: 100%',
+    tabPosition: 'left-h',
   }, 'tabs');
 
   var welcome = new dijit.layout.ContentPane({
@@ -51,9 +56,7 @@ dojo.addOnLoad(function () {
 
 
 
-  socket.send({
-    channel: CHANNEL || 'foo'
-  });
+  socket.emit('subscribe', CHANNEL || 'foo');
 });
 
 
@@ -67,18 +70,15 @@ function addLines(pre) {
   pre.innerHTML = "<ol>" + lines.join("") + "</ol>";
 }
 
-socket.on('message', function (data) {
-  console.log('Recieved', data);
-  if (data.content) {
-    for(var filename in data.content) {
-      console.log(filename);
-      var snippet = getSnippet(filename);
-      //snippet.setContent("<pre>" + data.content[filename].replace(/</g, '&lt;') + "</pre>");
-      var code = dojox.highlight.processString(data.content[filename]).result;
-      snippet.pre.innerHTML = code;
-      addLines(snippet.pre);
-      //snippet.pre.innerHTML = data.content[filename].replace(/</g, '&lt;');
-      //snippet.editor.getSession().setValue(data.content[filename]);
-    }
-  }
+socket.on('fileUpdate', function (files) {
+  var filename;
+
+  for(filename in files) { if (files.hasOwnProperty(filename)) {
+    console.log(filename);
+    var snippet = getSnippet(filename);
+
+    var code = dojox.highlight.processString(files[filename]).result;
+    snippet.pre.innerHTML = code;
+    addLines(snippet.pre);
+  }}
 });
