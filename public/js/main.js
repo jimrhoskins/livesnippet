@@ -48,7 +48,7 @@ dojo.addOnLoad(function () {
 
   var welcome = new dijit.layout.ContentPane({
     title: "Welcome",
-    content: "Hello World"
+    content: "Each tab to the left is a file that will be updated in real time using Socket.io"
   });
 
   tabs.addChild(welcome);

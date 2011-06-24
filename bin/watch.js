@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 // 
+// hello
 
 var GlobWatcher = require('../lib/globwatch').GlobWatcher;
 var LiveSnippet = require('../lib/livesnippet').LiveSnippet;
