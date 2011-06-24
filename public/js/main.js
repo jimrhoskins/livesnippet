@@ -1,4 +1,4 @@
-var socket = io.connect();
+var socket = io.connect("livesnippet.herokuapp.com");
 
 dojo.require('dijit.layout.TabContainer');
 dojo.require('dijit.layout.ContentPane');
