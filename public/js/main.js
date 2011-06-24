@@ -1,4 +1,4 @@
-io.transports = ['flashsocket', 'xhr-polling']
+io.transports = ['xhr-polling', 'htmlfile'];
 var socket = io.connect();
 
 dojo.require('dijit.layout.TabContainer');

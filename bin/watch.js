@@ -20,8 +20,9 @@ var argv = require('optimist')
 var watcher = new GlobWatcher();
 var snippet = new LiveSnippet(argv.url, argv.channel);
 
-snippet.createChannel(function () {
+snippet.createChannel(function (err) {
   console.log('Connected');
+  console.log(err);
 
   console.log("==============================================");
   console.log("============== Connected =====================");
