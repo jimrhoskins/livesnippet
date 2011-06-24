@@ -61,7 +61,7 @@ app.post('/snippets/:channel', function (req, res) {
     res.send('OK');
     
     var channel = req.params.channel;
-    var channel = channels[channel];
+    var channel = getChannel(channel);
     var name = req.query.name;
 
     console.log('Updating...', channel, name);
@@ -71,6 +71,16 @@ app.post('/snippets/:channel', function (req, res) {
     console.log('Updated Snippet from POST');
   });
 });
+
+
+
+function getChannel(name){
+  if (channels[name]) {
+    return channels[name];
+  }
+  return (channels[name] = new Channel(name));
+}
+
 
 // Handle sockets
 io.sockets.on('connection', function (socket) {
@@ -88,12 +98,6 @@ io.sockets.on('connection', function (socket) {
 
 
 
-  function getChannel(name){
-    if (channels[name]) {
-      return channels[name];
-    }
-    return (channels[name] = new Channel(name));
-  }
 
   socket.on('subscribe', function(channelName) {
     channel= getChannel(channelName);
