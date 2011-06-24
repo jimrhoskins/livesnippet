@@ -14,12 +14,12 @@
     "node": "*"
   },
   "dependencies": {
-    "socket.io": "*",
-    "express": "*",
-    "jade" : "*",
-    "glob" : "*",
-    "underscore": "*",
-    "optimist": "*",
-    "restler": "*"
+    "socket.io": "0.7.2",
+    "express": "2.3.12",
+    "jade" : "0.12.3",
+    "glob" : "2.0.7",
+    "underscore": "1.1.6",
+    "optimist": "0.2.4",
+    "restler": "0.2.1"
   }
 }
