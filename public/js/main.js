@@ -1,4 +1,5 @@
-var socket = io.connect("livesnippet.herokuapp.com");
+io.transports = ['flashsocket', 'xhr-polling']
+var socket = io.connect();
 
 dojo.require('dijit.layout.TabContainer');
 dojo.require('dijit.layout.ContentPane');
